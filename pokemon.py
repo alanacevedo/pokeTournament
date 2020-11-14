@@ -3,20 +3,26 @@ import requests
 
 class Pokemon:
     """
-    Class that represents a Pokemon.
+    Class that represents a Pokemon. When instanced, selects a random Pokemon from the first
+    151 and gets its info from pokeAPI via GET requests.
 
     Attributes:
         id (int): National number of the Pokemon
         name (str): Name of the Pokemon
         defense (int): Defense points of the Pokemon
         attack (int): Attack points of the Pokemon
-        hp (int): Health points of the Pokemon
+        max_hp (int): Maximum health points of the Pokemon
+        current_hp (int): Current health points of the Pokemon
         speed (int): Speed points of the Pokemon
         isAlive (bool): Boolean value indicating if the Pokemon is alive or not.
         types (list[str]): List containing this Pokemon's types
         dd_types (list[str]): List containing the types which take double damage from this Pokemon.
         hd_types (list[str]): List containing the types which take half damage from this Pokemon.
         nd_types (list[str]): List containing the types which take no damage from this Pokemon.
+
+    Methods:
+        attack_enemy(enemy: Pokemon)->int : Attacks another Pokemon and returns the damage dealt
+        heal_hp()->None: Heals Pokemon to full Health
 
     """
 
@@ -36,7 +42,8 @@ class Pokemon:
             elif stat == "attack":
                 self.attack = value
             elif stat == "hp":
-                self.hp = value
+                self.max_hp = value
+                self.current_hp = value
                 self.isAlive = True
             elif stat == "speed":
                 self.speed = value
@@ -59,8 +66,8 @@ class Pokemon:
         :param enemy: (Pokemon) The Pokemon to be attacked
         :return damage_done: (int) The damage dealt to the Pokemon
         """
-        variance = random.randint(0, 5)
-        brute_damage = self.attack - int(enemy.defense * 0.8)
+        variance = random.randint(0, 5)  # This will give a bit of randomness to the attack
+        brute_damage = self.attack - int(enemy.defense * 0.5)
         damage_dealt = max(brute_damage, 0) + variance
 
         # Checks if a damage modifier should be applied to this attack
@@ -71,9 +78,13 @@ class Pokemon:
         elif any(type_ in self.nd_types for type_ in enemy.types):
             damage_dealt = 0
 
-        enemy.hp -= damage_dealt
-        enemy.hp = max(enemy.hp, 0)
-        if enemy.hp == 0:
+        enemy.current_hp -= damage_dealt
+        enemy.current_hp = max(enemy.current_hp, 0)
+        if enemy.current_hp == 0:
             enemy.isAlive = False
 
         return damage_dealt
+
+    def restore_health(self) -> None:
+        """ Restores Pokemon to full HP """
+        self.current_hp = self.max_hp
