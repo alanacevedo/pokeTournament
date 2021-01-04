@@ -1,5 +1,6 @@
 import random
 import requests
+import typing
 
 class Pokemon:
     """
