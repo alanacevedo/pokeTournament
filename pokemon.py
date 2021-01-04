@@ -70,7 +70,7 @@ class Pokemon:
         brute_damage = self.attack - int(enemy.defense * 0.5)
         damage_dealt = max(brute_damage, 0) + variance
 
-        # Checks if a damage modifier should be applied to this attack
+        # Checks if a damage modifier should be applied to this attack.
         if any(type_ in self.dd_types for type_ in enemy.types):
             damage_dealt *= 2
         elif any(type_ in self.hd_types for type_ in enemy.types):
